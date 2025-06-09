@@ -131,12 +131,12 @@ def finetune():
         model = GPT2FlashLMHeadModel.from_pretrained(
             model_args.model_name_or_path,
             config=config,
-        )
+        ).half()
     else:
         model = AutoModelForCausalLM.from_pretrained(
             model_args.model_name_or_path,
             config=config,
-        )
+        ).half()
     # set up tokenizer
     tokenizer = AutoTokenizer.from_pretrained(model_args.tokenizer_name)
     # add extra pad token
