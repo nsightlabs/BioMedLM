@@ -17,6 +17,10 @@ from transformers import (
     AutoModelForCausalLM,
 )
 
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
+
 from sum_data_collator import DataCollatorForSumLanguageModeling
 from sum_dataset import LineByLineSumTextDataset
 
@@ -127,7 +131,7 @@ def finetune():
     # set up model
     config = AutoConfig.from_pretrained(model_args.model_name_or_path)
     if model_args.use_flash:
-        from finetune.utils.hf_flash_gpt_2 import GPT2FlashLMHeadModel
+        from utils.hf_flash_gpt_2 import GPT2FlashLMHeadModel
         model = GPT2FlashLMHeadModel.from_pretrained(
             model_args.model_name_or_path,
             config=config,
