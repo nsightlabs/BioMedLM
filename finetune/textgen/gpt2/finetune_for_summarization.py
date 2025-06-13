@@ -149,8 +149,7 @@ def finetune():
     train_dataset = get_dataset(data_args, tokenizer=tokenizer, training_args=training_args)
     eval_dataset = get_dataset(data_args, tokenizer=tokenizer, evaluate=True)
     # set up trainer
-
-    print('Training started')
+    print(training_args)
     trainer = Trainer(
         model=model,
         args=training_args,
@@ -160,6 +159,7 @@ def finetune():
         data_collator=data_collator
     )
     # launch fine tuning
+    print('Training started')
     trainer.train()
     print('Training ended')
     # save final model
