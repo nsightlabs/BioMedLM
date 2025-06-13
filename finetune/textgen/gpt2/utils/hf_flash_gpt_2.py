@@ -20,7 +20,7 @@ from typing import Optional, Tuple, Union
 
 import torch
 from einops import rearrange
-from flash_attn.flash_attn_interface import flash_attn_unpadded_qkvpacked_func
+from flash_attn.flash_attn_interface import flash_attn_varlen_qkvpacked_func
 from torch import nn
 from transformers.models.gpt2.configuration_gpt2 import GPT2Config
 from transformers.models.gpt2.modeling_gpt2 import (
@@ -59,7 +59,7 @@ class GPT2FlashAttention(GPT2Attention):
         attn_pdrop = self.attn_pdrop if self.training else 0.0
         softmax_scale = (1.0 / (dk ** 0.5)) if self.scale_attn_weights else 1.0
         softmax_scale = (softmax_scale / float(self.layer_idx + 1)) if self.scale_attn_by_inverse_layer_idx else softmax_scale
-        output = flash_attn_unpadded_qkvpacked_func(
+        output = flash_attn_varlen_qkvpacked_func(
             qkv, cu_seqlens, max_s, attn_pdrop,
             softmax_scale=softmax_scale, causal=True
         )
