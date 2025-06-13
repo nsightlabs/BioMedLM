@@ -5,3 +5,4 @@ rouge-score
 sacrebleu
 transformers
 wandb
+flash-attn
