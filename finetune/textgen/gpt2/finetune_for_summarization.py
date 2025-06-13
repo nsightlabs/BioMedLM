@@ -19,7 +19,7 @@ from transformers import (
 
 from sum_data_collator import DataCollatorForSumLanguageModeling
 from sum_dataset import LineByLineSumTextDataset
-
+from utils.hf_flash_gpt_2 import GPT2FlashLMHeadModel
 import torch.distributed as dist
 
 import json
@@ -126,17 +126,16 @@ def finetune():
     set_seed(training_args.seed)
     # set up model
     config = AutoConfig.from_pretrained(model_args.model_name_or_path)
-    if model_args.use_flash:
-        from utils.hf_flash_gpt_2 import GPT2FlashLMHeadModel
+    if model_args.use_flash:        
         model = GPT2FlashLMHeadModel.from_pretrained(
             model_args.model_name_or_path,
             config=config,
-        ).half()
+        )
     else:
         model = AutoModelForCausalLM.from_pretrained(
             model_args.model_name_or_path,
             config=config,
-        ).half()
+        )
     # set up tokenizer
     tokenizer = AutoTokenizer.from_pretrained(model_args.tokenizer_name)
     # add extra pad token
@@ -150,6 +149,8 @@ def finetune():
     train_dataset = get_dataset(data_args, tokenizer=tokenizer, training_args=training_args)
     eval_dataset = get_dataset(data_args, tokenizer=tokenizer, evaluate=True)
     # set up trainer
+
+    print('Training started')
     trainer = Trainer(
         model=model,
         args=training_args,
@@ -160,6 +161,7 @@ def finetune():
     )
     # launch fine tuning
     trainer.train()
+    print('Training ended')
     # save final model
     trainer.save_model()
     trainer.save_state()
